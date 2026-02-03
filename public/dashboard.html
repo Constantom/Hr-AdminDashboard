@@ -9,9 +9,8 @@
 <body>
 
 <div class="app">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
+<div id="overlay"></div>
+  <aside class="sidebar" id="sidebar">
     <h2>HR Admin</h2>
 
     <a href="dashboard.html" class="active"><span>Dashboard</span></a>
@@ -25,12 +24,11 @@
   <!-- MAIN -->
   <main class="main">
 
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <h1>Dashboard</h1>
-      <button id="menuBtn" class="theme-toggle">☰ Menu</button>
-      <button id="themeToggle" class="theme-toggle">Light / Dark</button>
-    </div>
+   <div class="topbar">
+  <button id="menuBtn" class="menu-btn">☰</button>
+  <h1>Dashboard</h1>
+  <button id="themeToggle" class="theme-toggle">Light / Dark</button>
+</div>
 
     <!-- KPI CARDS -->
     <section class="kpi-grid">

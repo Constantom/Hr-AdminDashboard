@@ -9,8 +9,8 @@
 <body>
 
 <div class="app">
-
-  <aside class="sidebar">
+<div id="overlay"></div>
+  <aside class="sidebar" id="sidebar">
     <h2>HR Admin</h2>
     <a href="dashboard.html"><span>Dashboard</span></a>
     <a href="employees.html" class="active"><span>Employees</span></a>
@@ -22,14 +22,12 @@
 
   <main class="main">
 
-    <div class="topbar">
-      <h1>Employees</h1>
-      <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <button class="btn" id="addEmployeeBtn">+ Add Employee</button>
-        <button id="menuBtn" class="theme-toggle">☰ Menu</button>
-        <button id="themeToggle" class="theme-toggle">Light / Dark</button>
-      </div>
-    </div>
+   <div class="topbar">
+  <button id="menuBtn" class="menu-btn">☰</button>
+  <h1>Employees</h1>
+  <button id="themeToggle" class="theme-toggle">Light / Dark</button>
+</div>
+
 
     <div class="card" style="margin-bottom:20px;">
       <input id="searchInput" type="text" placeholder="Search employees..." style="width:100%;padding:14px;border-radius:10px;border:1px solid var(--border);background:var(--surface-solid);color:var(--text);" />

@@ -37,10 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 const menuBtn = document.getElementById('menuBtn');
-const sidebar = document.querySelector('.sidebar');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
 
-if (menuBtn && sidebar) {
-  menuBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('open');
-  });
+if (menuBtn && sidebar && overlay) {
+  menuBtn.onclick = () => {
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+  };
+
+  overlay.onclick = () => {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+  };
 }
