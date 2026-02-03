@@ -7,12 +7,11 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-<div class="app">
 
+<div class="app">
 
   <aside class="sidebar">
     <h2>HR Admin</h2>
-
     <a href="dashboard.html"><span>Dashboard</span></a>
     <a href="employees.html" class="active"><span>Employees</span></a>
     <a href="attendance.html"><span>Attendance</span></a>
@@ -21,37 +20,23 @@
     <button id="logoutBtn" class="theme-toggle">Logout</button>
   </aside>
 
- 
   <main class="main">
-
 
     <div class="topbar">
       <h1>Employees</h1>
-      <div style="display:flex; gap:12px;">
-        <button class="btn">+ Add Employee</button>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <button class="btn" id="addEmployeeBtn">+ Add Employee</button>
+        <button id="menuBtn" class="theme-toggle">☰ Menu</button>
         <button id="themeToggle" class="theme-toggle">Light / Dark</button>
       </div>
     </div>
 
-
-    <div class="card" style="margin-bottom: 20px;">
-      <input
-        type="text"
-        placeholder="Search employees..."
-        style="
-          width: 100%;
-          padding: 14px;
-          border-radius: 10px;
-          border: 1px solid var(--border);
-          background: var(--surface-solid);
-          color: var(--text);
-        "
-      />
+    <div class="card" style="margin-bottom:20px;">
+      <input id="searchInput" type="text" placeholder="Search employees..." style="width:100%;padding:14px;border-radius:10px;border:1px solid var(--border);background:var(--surface-solid);color:var(--text);" />
     </div>
 
-  
-    <div class="card">
-      <table>
+    <div class="card table-wrap">
+      <table id="employeeTable">
         <thead>
           <tr>
             <th>Name</th>
@@ -61,53 +46,18 @@
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>John Doe</td>
-            <td>Engineering</td>
-            <td>Frontend Developer</td>
-            <td><span class="badge success">Active</span></td>
-            <td><button class="btn btn-view">View</button></td>
-          </tr>
-          <tr>
-            <td>Mary Okafor</td>
-            <td>HR</td>
-            <td>HR Manager</td>
-            <td><span class="badge success">Active</span></td>
-            <td><button class="btn btn-view">View</button></td>
-          </tr>
-          <tr>
-            <td>Samuel Ade</td>
-            <td>Finance</td>
-            <td>Accountant</td>
-            <td><span class="badge warning">On Leave</span></td>
-            <td><button class="btn btn-view">View</button></td>
-          </tr>
-        </tbody>
+        <tbody></tbody>
       </table>
     </div>
 
   </main>
 </div>
 
-
-<div id="employeeModal" style="
-  display:none;
-  position:fixed;
-  inset:0;
-  background: rgba(0,0,0,0.45);
-  align-items:center;
-  justify-content:center;
-  z-index:1000;
-">
-  <div class="card" style="width: 420px;">
-    <h3>Employee Profile</h3>
-    <p style="margin-top:10px;"><strong>Name:</strong> John Doe</p>
-    <p><strong>Department:</strong> Engineering</p>
-    <p><strong>Role:</strong> Frontend Developer</p>
-    <p><strong>Status:</strong> Active</p>
-
-    <div style="margin-top:20px; text-align:right;">
+<div id="employeeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;z-index:1000;">
+  <div class="card" style="width:420px;max-width:90%;">
+    <h3 id="modalTitle">Employee</h3>
+    <div id="modalBody"></div>
+    <div style="margin-top:20px;text-align:right;">
       <button class="btn" onclick="closeModal()">Close</button>
     </div>
   </div>
@@ -115,26 +65,99 @@
 
 <script src="js/auth.js"></script>
 <script>
-  const allowedRoles = ['Admin','HR Manager'];
-  const user = checkAccess(allowedRoles);
-
-  if(user) setupSidebar(user);
-  if(user) setupLogout('logoutBtn');
+  const allowedRoles = ['Admin','HR Manager']
+  const user = checkAccess(allowedRoles)
+  if(user) setupSidebar(user)
+  if(user) setupLogout('logoutBtn')
 </script>
-<script src="js/ui.js"></script>
-<script>
-  const modal = document.getElementById("employeeModal");
-  const viewButtons = document.querySelectorAll(".btn-view");
 
-  viewButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      modal.style.display = "flex";
-    });
-  });
+<script src="js/ui.js"></script>
+
+<script>
+  let employees = [
+    { name:'John Doe', department:'Engineering', role:'Frontend Developer', status:'Active' },
+    { name:'Mary Okafor', department:'HR', role:'HR Manager', status:'Active' },
+    { name:'Samuel Ade', department:'Finance', role:'Accountant', status:'On Leave' }
+  ]
+
+  const tbody = document.querySelector('#employeeTable tbody')
+  const modal = document.getElementById('employeeModal')
+  const modalBody = document.getElementById('modalBody')
+  const modalTitle = document.getElementById('modalTitle')
+  const searchInput = document.getElementById('searchInput')
+
+  function renderEmployees(list) {
+    tbody.innerHTML = ''
+    list.forEach((emp, index) => {
+      const tr = document.createElement('tr')
+      tr.innerHTML = `
+        <td>${emp.name}</td>
+        <td>${emp.department}</td>
+        <td>${emp.role}</td>
+        <td><span class="badge ${emp.status === 'Active' ? 'success' : 'warning'}">${emp.status}</span></td>
+        <td><button class="btn" onclick="viewEmployee(${index})">View</button></td>
+      `
+      tbody.appendChild(tr)
+    })
+  }
+
+  function viewEmployee(index) {
+    const emp = employees[index]
+    modalTitle.textContent = 'Employee Profile'
+    modalBody.innerHTML = `
+      <p><strong>Name:</strong> ${emp.name}</p>
+      <p><strong>Department:</strong> ${emp.department}</p>
+      <p><strong>Role:</strong> ${emp.role}</p>
+      <p><strong>Status:</strong> ${emp.status}</p>
+    `
+    modal.style.display = 'flex'
+  }
 
   function closeModal() {
-    modal.style.display = "none";
+    modal.style.display = 'none'
   }
+
+  document.getElementById('addEmployeeBtn').addEventListener('click', () => {
+    modalTitle.textContent = 'Add Employee'
+    modalBody.innerHTML = `
+      <input id="empName" placeholder="Name" style="width:100%;padding:12px;margin-bottom:10px;border-radius:10px;border:1px solid var(--border);" />
+      <input id="empDept" placeholder="Department" style="width:100%;padding:12px;margin-bottom:10px;border-radius:10px;border:1px solid var(--border);" />
+      <input id="empRole" placeholder="Role" style="width:100%;padding:12px;margin-bottom:10px;border-radius:10px;border:1px solid var(--border);" />
+      <select id="empStatus" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);">
+        <option>Active</option>
+        <option>On Leave</option>
+      </select>
+      <button class="btn" style="margin-top:16px;width:100%;" onclick="saveEmployee()">Save</button>
+    `
+    modal.style.display = 'flex'
+  })
+
+  function saveEmployee() {
+    const emp = {
+      name: empName.value.trim(),
+      department: empDept.value.trim(),
+      role: empRole.value.trim(),
+      status: empStatus.value
+    }
+    if(emp.name && emp.department && emp.role) {
+      employees.push(emp)
+      renderEmployees(employees)
+      closeModal()
+    }
+  }
+
+  searchInput.addEventListener('input', () => {
+    const value = searchInput.value.toLowerCase()
+    const filtered = employees.filter(e =>
+      e.name.toLowerCase().includes(value) ||
+      e.department.toLowerCase().includes(value) ||
+      e.role.toLowerCase().includes(value)
+    )
+    renderEmployees(filtered)
+  })
+
+  renderEmployees(employees)
 </script>
+
 </body>
 </html>
